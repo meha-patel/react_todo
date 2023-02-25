@@ -17,7 +17,6 @@ function TodoList() {
 
   useEffect(()=> {
     if (location.state?.id) {
-      console.log("inside use effect:", location.state.id);
       setTodoList(
         [...todoList].map((todo) => {
           if (todo.id === location.state.id.id) {
