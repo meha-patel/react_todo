@@ -1,33 +1,20 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import {useContext, useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+import todoContext from "../store/todo-context";
 import Todo from "./todo";
-
-const data = [
-  { text: "Coding", priority: "High", id: 1 },
-  { text: "Cooking", priority: "Medium", id: 2 },
-  { text: "Watching Movie", priority: "Low", id: 3 },
-];
 
 function TodoList() {
   const location = useLocation();
-  const [todoList, setTodoList] = useState(data);
+  // const [todoList, setTodoList] = useState(data);
   const [todoText, setTodoText] = useState("");
   const [todoPriority, setTodoPriority] = useState("");
   const [selectedTodo, setSelectedTodo] = useState({});
 
-  useEffect(()=> {
-    if (location.state?.id) {
-      setTodoList(
-        [...todoList].map((todo) => {
-          if (todo.id === location.state.id.id) {
-            return location.state.id;
-          } else {
-            return todo;
-          }
-        })
-      );
-    }
-  }, [])
+  const {todoList, setTodoList} = useContext(todoContext);
+
+  // useEffect(()=> {
+
+  // }, [])
 
   const addTodoHandler = () => {
     setTodoList([
@@ -43,18 +30,14 @@ function TodoList() {
   return (
     <>
       <div>
-        <ul style={{ margin: "auto", width: "100%" }}>
+        <ul style={{margin: "auto", width: "100%"}}>
           {todoList.map((todo, id) => (
-            <Todo
-              todo={todo}
-              key={id}
-              id={id}
-              //   updateTodoHandler={updateTodoHandler}
-              //   removeTodoHandler={removeTodoHandler}
-            />
+            <Todo todo={todo} key={id} id={id} />
           ))}
         </ul>
       </div>
+      <br />
+      <br />
       <input
         type="text"
         value={todoText}

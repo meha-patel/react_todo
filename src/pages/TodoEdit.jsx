@@ -1,5 +1,6 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import todoContext from "../store/todo-context";
 
 function TodoEdit() {
   const navigate = useNavigate();
@@ -9,8 +10,21 @@ function TodoEdit() {
   const [todoPriority, setTodoPriority] = useState("");
   const [selectedTodo, setSelectedTodo] = useState(location.state.id);
 
+  const {todoList, setTodoList} = useContext(todoContext);
+
   const editTodoHandler = () => {
-    navigate("/todos", { state: { id: selectedTodo } });
+    if (selectedTodo) {
+      setTodoList(
+        [...todoList].map((todo) => {
+          if (todo.id === selectedTodo.id) {
+            return selectedTodo;
+          } else {
+            return todo;
+          }
+        })
+      );
+    }
+    navigate("/todos");
   };
 
   return (
