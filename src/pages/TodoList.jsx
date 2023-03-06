@@ -1,37 +1,33 @@
-import {useContext, useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
-import todoContext from "../store/todo-context";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Todo from "./todo";
 
 function TodoList() {
-  const location = useLocation();
-  // const [todoList, setTodoList] = useState(data);
+  const dispatch = useDispatch();
   const [todoText, setTodoText] = useState("");
   const [todoPriority, setTodoPriority] = useState("");
-  const [selectedTodo, setSelectedTodo] = useState({});
 
-  const {todoList, setTodoList} = useContext(todoContext);
-
-  // useEffect(()=> {
-
-  // }, [])
+  const listOfTodoFromRedux = useSelector((state) => state.todos);
 
   const addTodoHandler = () => {
-    setTodoList([
-      ...todoList,
-      {
+    dispatch({
+      type: "add",
+      payload: {
         text: todoText,
         priority: todoPriority,
-        id: todoList[todoList.length - 1].id + 1,
+        id:
+          listOfTodoFromRedux && listOfTodoFromRedux.length > 0
+            ? listOfTodoFromRedux[listOfTodoFromRedux.length - 1]?.id + 1
+            : 1,
       },
-    ]);
+    });
   };
 
   return (
     <>
       <div>
-        <ul style={{margin: "auto", width: "100%"}}>
-          {todoList.map((todo, id) => (
+        <ul style={{ margin: "auto", width: "100%" }}>
+          {listOfTodoFromRedux.map((todo, id) => (
             <Todo todo={todo} key={id} id={id} />
           ))}
         </ul>

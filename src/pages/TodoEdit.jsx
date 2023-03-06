@@ -1,29 +1,25 @@
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
-import todoContext from "../store/todo-context";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 function TodoEdit() {
   const navigate = useNavigate();
   const params = useParams();
-  const location = useLocation();
-  const [todoText, setTodoText] = useState("");
-  const [todoPriority, setTodoPriority] = useState("");
-  const [selectedTodo, setSelectedTodo] = useState(location.state.id);
-
-  const {todoList, setTodoList} = useContext(todoContext);
+  const todos = useSelector((state) => state.todos);
+  const editingTodo = todos.find((t) => t.id === parseInt(params.todoId));
+  const [todoText, setTodoText] = useState(editingTodo.text);
+  const [todoPriority, setTodoPriority] = useState(editingTodo.priority);
+  const dispatch = useDispatch();
 
   const editTodoHandler = () => {
-    if (selectedTodo) {
-      setTodoList(
-        [...todoList].map((todo) => {
-          if (todo.id === selectedTodo.id) {
-            return selectedTodo;
-          } else {
-            return todo;
-          }
-        })
-      );
-    }
+    dispatch({
+      type: "edit",
+      payload: {
+        text: todoText,
+        priority: todoPriority,
+        id: editingTodo.id,
+      },
+    });
     navigate("/todos");
   };
 
@@ -32,26 +28,18 @@ function TodoEdit() {
       <h1>Todo Edit</h1>
       <input
         type="text"
-        value={selectedTodo.text}
-        onChange={(e) =>
-          setSelectedTodo({
-            text: e.target.value,
-            priority: selectedTodo.priority,
-            id: selectedTodo.id,
-          })
-        }
+        value={todoText}
+        onChange={(e) => {
+          setTodoText(e.target.value);
+        }}
       />
       <br />
       <br />
       <select
-        onChange={(e) =>
-          setSelectedTodo({
-            text: selectedTodo.text,
-            priority: e.target.value,
-            id: selectedTodo.id,
-          })
-        }
-        value={selectedTodo.priority}
+        value={todoPriority}
+        onChange={(e) => {
+          setTodoPriority(e.target.value);
+        }}
       >
         <option value="Low">Low</option>
         <option value="Medium">Medium</option>

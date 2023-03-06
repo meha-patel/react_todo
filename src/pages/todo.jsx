@@ -1,15 +1,16 @@
-import React, {useContext} from "react";
+import React from "react";
 import "./todo.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeIcon from "@mui/icons-material/Mode";
-import {Link} from "react-router-dom";
-import todoContext from "../store/todo-context";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const Todo = ({todo, id}) => {
-  const {todoList, setTodoList, themeMode} = useContext(todoContext);
+const Todo = ({ todo, id }) => {
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme);
 
   let backgroundStyle = "";
-  const {text, priority} = todo;
+  const { text, priority } = todo;
   if (priority === "High") {
     backgroundStyle = "background-red";
   } else if (priority === "Medium") {
@@ -20,10 +21,12 @@ const Todo = ({todo, id}) => {
 
   const removeTodoHandler = (id) => {
     if (id) {
-      const removeItem = todoList.filter((todo) => {
-        return todo.id !== id;
+      dispatch({
+        type: "delete",
+        payload: {
+          id: id,
+        },
       });
-      setTodoList(removeItem);
     }
   };
 
@@ -36,14 +39,14 @@ const Todo = ({todo, id}) => {
         marginBottom: "6px",
         textAlign: "left",
         paddingLeft: "70px",
-        opacity: themeMode === "dark" ? 0.5 : 1,
+        opacity: theme.color === "dark" ? 0.5 : 1,
       }}
       className={backgroundStyle}
       key={id}
     >
       {text}
       <DeleteIcon
-        style={{float: "right", cursor: "pointer", paddingRight: "10px"}}
+        style={{ float: "right", cursor: "pointer", paddingRight: "10px" }}
         onClick={() => removeTodoHandler(todo.id)}
       />
 
@@ -51,9 +54,9 @@ const Todo = ({todo, id}) => {
         style={{ float: "right", cursor: "pointer", paddingRight: "10px" }}
         onClick={() => removeTodoHandler(todo.id)}
       /> */}
-      <Link to={`/todos/${todo.id}`} state={{id: todo}}>
+      <Link to={`/todos/${todo.id}`} state={{ id: todo }}>
         <ModeIcon
-          style={{float: "right", cursor: "pointer", paddingRight: "10px"}}
+          style={{ float: "right", cursor: "pointer", paddingRight: "10px" }}
           //   onClick={() => updateTodoHandler(todo)}
         />
       </Link>

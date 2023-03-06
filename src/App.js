@@ -4,27 +4,12 @@ import {
   // Route,
   RouterProvider,
 } from "react-router-dom";
-import {useState} from "react";
 import ErrorPage from "./pages/Error";
 import HomePage from "./pages/Home";
-import ProductsPage from "./pages/Products";
 import RootLayout from "./pages/Root";
 import TodoList from "./pages/TodoList";
 import TodoEdit from "./pages/TodoEdit";
-import todoContext from "./store/todo-context";
-
-// const routeDefinitions = createRoutesFromElements(
-//   <Route>
-//     <Route path="/" element={<HomePage />} />
-//     <Route path="/products" element={<ProductsPage />} />
-//   </Route>
-// )
-
-const data = [
-  {text: "Coding", priority: "High", id: 1},
-  {text: "Cooking", priority: "Medium", id: 2},
-  {text: "Watching Movie", priority: "Low", id: 3},
-];
+import { useDispatch, useSelector } from "react-redux";
 
 const router = createBrowserRouter([
   {
@@ -32,39 +17,33 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
-      {path: "/", element: <HomePage />},
-      {path: "/todos", element: <TodoList />},
-      {path: "todos/:todoId", element: <TodoEdit />},
+      { path: "/", element: <HomePage /> },
+      { path: "/todos", element: <TodoList /> },
+      { path: "todos/:todoId", element: <TodoEdit /> },
     ],
   },
 ]);
 
-// const router = createBrowserRouter(routeDefinitions);
-
 function App() {
-  const [todoList, setTodoList] = useState(data);
-  const [themeMode, setThemeMode] = useState("dark");
-  const value = {todoList, setTodoList, themeMode};
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme);
+  console.log("theme:", theme);
 
   const updateTheme = () => {
-    if (themeMode === "dark") {
-      setThemeMode("light");
-    } else if (themeMode === "light") {
-      setThemeMode("dark");
+    if (theme.color === "dark") {
+      dispatch({ type: "light" });
+    } else if (theme.color === "light") {
+      dispatch({ type: "dark" });
     }
   };
 
   return (
     <>
       <button onClick={updateTheme}>Update Theme</button>
-      <p>{themeMode}</p>
-      <todoContext.Provider value={value}>
-        <RouterProvider router={router} />;
-      </todoContext.Provider>
+      <p>{theme.color}</p>
+      <RouterProvider router={router} />;
     </>
   );
-
-  // return <RouterProvider router={router} />;
 }
 
 export default App;
